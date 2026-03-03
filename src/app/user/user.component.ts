@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, Input, input, Output } from '@angular/core';
+import { Component, computed, EventEmitter, Input, input, Output, output } from '@angular/core';
 import { DUMMY_USERS } from './dummy-users';
 
 // const randomIndex = Math.floor(Math.random() * DUMMY_USERS.length);
@@ -11,11 +11,16 @@ import { DUMMY_USERS } from './dummy-users';
     styleUrl: './user.component.css'
 })
 export class UserComponent {
-    @Input({ required: true }) id!: string;
-    @Input({ required: true }) avatar!: string;
-    @Input({ required: true }) name!: string;
-    @Output() selectedUser = new EventEmitter();
+    @Input({ required: true }) user!: {
+        id: string,
+        avatar: string,
+        name: string
+    };
+    @Output() selectedUser = new EventEmitter<string>();
+    // Almost the same as regular Output
+    selectedUserSignal = output<string>();
 
+    // SIGNALS
     // avatar = input.required<string>();
     // name = input.required<string>();
     // imagePath = computed(() => {
@@ -23,11 +28,15 @@ export class UserComponent {
     // })
 
     get imagePath(): string {
-        return 'public/users/' + this.avatar;
+        return 'public/users/' + this.user.avatar;
     }
 
     onSelectUser() {
-        this.selectedUser.emit(this.id);
+        this.selectedUser.emit(this.user.id);
+    }
+
+    onSelectUserSignal() {
+        this.selectedUserSignal.emit(this.user.id);
     }
 
     // =================================================================================================================
