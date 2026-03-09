@@ -1,7 +1,25 @@
-<div id="app-task">
-	<p>app-tasks.component works!</p>
-	<div>
-		<h2> {{ getSelectedUser ? getSelectedUser.name : "non" }}</h2>
-	</div>
-</div>
+@if (isAddingTask) {
+	<app-new-task (cancel)="onCancelNewTask()" (add)="onAddTask($event)"></app-new-task>
+}
+
+<section id="tasks">
+	<header>
+		@if (getSelectedUser) {
+			<h2> {{ getSelectedUser.name }}'s Tasks</h2>
+		}
+		<menu>
+			<button (click)="onAddNewTask()">Add task</button>
+		</menu>
+	</header>
+
+	<ul>
+		@for (task of selectedUserTasks; track task.id) {
+			<li>
+				<app-task [task]="task" (completed)="onCompleteTask($event)"></app-task>
+			</li>
+		}
+	</ul>
+</section>
+
+
 
