@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormsModule } from "@angular/forms";
-import { NewTaskData, Task } from "../task/task.model";
+import { AppTasksService } from "../app-tasks.service";
 
 @Component({
     selector: 'app-new-task',
@@ -11,22 +11,34 @@ import { NewTaskData, Task } from "../task/task.model";
     styleUrl: './new-task.component.css',
 })
 export class NewTaskComponent {
-    @Output() cancel = new EventEmitter<boolean>();
-    @Output() add = new EventEmitter<NewTaskData>();
+    @Input({ required: true }) userId!: string;
+    @Output() close = new EventEmitter<boolean>();
+
     enteredTitle: string = '';
     enteredSummary: string = '';
     enteredDate: string = '';
 
+    // RECOMMENDED Angular v14+ di injection
+    private tasksService: AppTasksService = inject(AppTasksService);
+
+    // DEFAULT property-based injection
+    // private tasksService: AppTasksService;
+    //
+    // constructor(tasksService: AppTasksService) {
+    //     this.tasksService = tasksService;
+    // }
+
     onCancel() {
-        this.cancel.emit(true);
+        this.close.emit(true);
     }
 
     onSubmit() {
-        const newTask: NewTaskData = {
+        this.tasksService.addUserTask({
             title: this.enteredTitle,
             summary: this.enteredSummary,
             date: this.enteredDate
-        }
-        this.add.emit(newTask);
+        }, this.userId);
+
+        this.close.emit(true);
     }
 }
